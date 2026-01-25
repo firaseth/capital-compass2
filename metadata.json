@@ -1,0 +1,8 @@
+{
+  "name": "Capital Compass",
+  "description": "A high-end financial underwriting dashboard featuring the 4-Quadrant Weighting Matrix and AI-powered Guardian Underwriter for sophisticated capital management.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
