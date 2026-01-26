@@ -17,6 +17,13 @@ export const INITIAL_QUADRANTS = [
   { name: 'Risk', value: 25, description: 'Weighted liability exposure and volatility index.' }
 ];
 
+export const SAMPLE_ASSETS = [
+  { id: 'AST-001', name: 'Creator Portfolio Alpha', type: 'Equity', value: 1250000, veracityHash: 'sha256:7f83...a9b2', status: 'verified' },
+  { id: 'AST-002', name: 'Global Rights Catalog', type: 'Intellectual Property', value: 850000, veracityHash: 'sha256:3e12...f9c0', status: 'verified' },
+  { id: 'AST-003', name: 'Liquid Reserves (USD)', type: 'Cash', value: 340000, veracityHash: 'sha256:a221...e3b4', status: 'verified' },
+  { id: 'AST-004', name: 'Emerging Market Option', type: 'Derivative', value: 150000, veracityHash: 'sha256:d889...b112', status: 'flagged' },
+];
+
 export const PERFORMANCE_DATA = [
   { month: 'Jan', value: 450000, growth: 12 },
   { month: 'Feb', value: 475000, growth: 15 },
@@ -33,6 +40,52 @@ export const MARKET_INDICATORS = [
   { label: 'US 10Y', value: '4.21%', change: '+0.02%', trend: 'up' },
   { label: 'Gold', value: '$2,342', change: '+0.45%', trend: 'up' },
 ];
+
+export const INDICATOR_DETAILS: Record<string, {
+  history: { date: string; value: number }[];
+  news: { title: string; source: string; time: string }[];
+}> = {
+  'S&P 500': {
+    history: [
+      { date: 'Mon', value: 5080 }, { date: 'Tue', value: 5095 }, { date: 'Wed', value: 5110 }, 
+      { date: 'Thu', value: 5105 }, { date: 'Fri', value: 5123 }
+    ],
+    news: [
+      { title: 'Tech Sector Rally Drives Benchmarks to Record Highs', source: 'Institutional Weekly', time: '2h ago' },
+      { title: 'Fed Outlook: Stability Measures Impacting Index Growth', source: 'Capital Intelligence', time: '5h ago' }
+    ]
+  },
+  'BTC/USD': {
+    history: [
+      { date: 'Mon', value: 66000 }, { date: 'Tue', value: 65200 }, { date: 'Wed', value: 64800 }, 
+      { date: 'Thu', value: 63500 }, { date: 'Fri', value: 64120 }
+    ],
+    news: [
+      { title: 'Spot ETF Inflows Stabilize After Volatility Peak', source: 'Digital Asset Ledger', time: '1h ago' },
+      { title: 'Regulatory Integrity Check: New Custody Protocols Verified', source: 'Veracity News', time: '4h ago' }
+    ]
+  },
+  'US 10Y': {
+    history: [
+      { date: 'Mon', value: 4.15 }, { date: 'Tue', value: 4.18 }, { date: 'Wed', value: 4.19 }, 
+      { date: 'Thu', value: 4.20 }, { date: 'Fri', value: 4.21 }
+    ],
+    news: [
+      { title: 'Treasury Auction Shows Strong Institutional Demand', source: 'Bond Market Daily', time: '3h ago' },
+      { title: 'Inflation Data Veracity Reaffirms Stability Target', source: 'Economic Guardian', time: '7h ago' }
+    ]
+  },
+  'Gold': {
+    history: [
+      { date: 'Mon', value: 2310 }, { date: 'Tue', value: 2325 }, { date: 'Wed', value: 2330 }, 
+      { date: 'Thu', value: 2335 }, { date: 'Fri', value: 2342 }
+    ],
+    news: [
+      { title: 'Central Bank Accumulation Continues Amid Risk Vectors', source: 'Bullion Report', time: '30m ago' },
+      { title: 'Safe Haven Demand Spikes in Emerging Markets', source: 'Global Capital Forensics', time: '6h ago' }
+    ]
+  }
+};
 
 export const NOTIFICATIONS = [
   { id: 1, title: 'Veracity Check Complete', time: '2m ago', type: 'success', message: 'SHA-256 Ledger synchronized.' },
@@ -59,6 +112,11 @@ export const ICONS = {
   Ingest: () => (
     <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+    </svg>
+  ),
+  Assets: () => (
+    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
     </svg>
   )
 };

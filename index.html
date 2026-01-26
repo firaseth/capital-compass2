@@ -10,19 +10,46 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg-primary: #0B1222;
+            --bg-sidebar: #040812;
+            --bg-card: #081a1a;
+            --bg-accent-low: rgba(212, 175, 55, 0.1);
+        }
+
+        body.midnight {
+            --bg-primary: #020617;
+            --bg-sidebar: #000000;
+            --bg-card: #0f172a;
+            --bg-accent-low: rgba(30, 64, 175, 0.15);
+        }
+
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #0B1222; /* Matches the Slate Navy from the brand asset */
+            background-color: var(--bg-primary);
             color: #E2E8F0;
+            transition: background-color 0.5s ease;
         }
+
+        /* Thematic Overrides */
+        .midnight .bg-\[\#0B1222\], 
+        .midnight .bg-\[\#061616\] { background-color: var(--bg-primary) !important; }
+        .midnight .bg-\[\#040812\] { background-color: var(--bg-sidebar) !important; }
+        .midnight .bg-\[\#081a1a\],
+        .midnight .bg-\[\#0b2222\] { background-color: var(--bg-card) !important; }
+
         .gold-glow {
             box-shadow: 0 0 20px rgba(212, 175, 55, 0.25);
         }
+        .midnight .gold-glow {
+            box-shadow: 0 0 25px rgba(30, 64, 175, 0.2);
+        }
+
         .custom-scrollbar::-webkit-scrollbar {
             width: 4px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
-            background: #0B1222;
+            background: var(--bg-primary);
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
             background: #D4AF37;

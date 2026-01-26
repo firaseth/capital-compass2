@@ -12,9 +12,10 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ activeSection, setActiveSection }) => {
   const menuItems = [
     { id: AppSection.DASHBOARD, label: 'Capital Overview', icon: <ICONS.Dashboard /> },
-    { id: AppSection.MATRIX, label: '4-Quadrant Matrix', icon: <ICONS.Matrix /> },
-    { id: AppSection.GUARDIAN, label: 'Guardian Agent', icon: <ICONS.Guardian /> },
-    { id: AppSection.VIDEO_ANALYSIS, label: 'Video Intelligence', icon: (
+    { id: AppSection.MATRIX, label: 'Underwriting Matrix', icon: <ICONS.Matrix /> },
+    { id: AppSection.ASSETS, label: 'Asset Ledger', icon: <ICONS.Assets /> },
+    { id: AppSection.GUARDIAN, label: 'Guardian AI', icon: <ICONS.Guardian /> },
+    { id: AppSection.VIDEO_ANALYSIS, label: 'Asset Forensics', icon: (
       <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
       </svg>
@@ -64,7 +65,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeSection, setActiveSection }) =>
           <span className="text-[9px] uppercase font-black text-slate-400 tracking-[0.1em]">Veracity Lock: SHA-256</span>
         </div>
         <p className="text-[10px] text-slate-500 leading-relaxed font-semibold uppercase tracking-tighter">
-          Institutional Integrity Shield
+          Institutional Feasibility Tool
         </p>
       </div>
     </div>

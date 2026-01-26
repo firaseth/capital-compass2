@@ -20,10 +20,28 @@ export interface ChatMessage {
   sources?: { title: string; uri: string }[];
 }
 
+export interface Scenario {
+  id: string;
+  name: string;
+  quadrants: QuadrantScore[];
+  score: number;
+  timestamp: number;
+}
+
+export interface Asset {
+  id: string;
+  name: string;
+  type: string;
+  value: number;
+  veracityHash: string;
+  status: 'verified' | 'pending' | 'flagged';
+}
+
 export enum AppSection {
   DASHBOARD = 'DASHBOARD',
   MATRIX = 'MATRIX',
   GUARDIAN = 'GUARDIAN',
+  ASSETS = 'ASSETS',
   INGEST = 'INGEST',
   VIDEO_ANALYSIS = 'VIDEO_ANALYSIS'
 }
