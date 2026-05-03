@@ -158,15 +158,17 @@ const App: React.FC = () => {
             <PortfolioPerformance />
 
             <div className="mt-4 pt-4 border-t border-slate-800/70 flex items-center justify-between gap-4">
-              <div className="flex gap-4">
+              <div className="flex gap-5">
                 {[
-                  { label: 'YTD Return', value: '+69.3%', color: 'text-green-400' },
-                  { label: 'Alpha', value: '+41.4%', color: 'text-green-400' },
-                  { label: 'Sharpe', value: '2.14', color: 'text-[#D4AF37]' },
+                  { label: 'YTD Return', value: '+69.3%', color: 'text-green-400', sub: 'vs +27.9% BM' },
+                  { label: 'Alpha',      value: '+41.4%', color: 'text-green-400', sub: 'Risk-adj.' },
+                  { label: 'Sharpe',     value: '2.14',   color: 'text-[#D4AF37]', sub: 'Ratio' },
+                  { label: 'Max DD',     value: '-4.1%',  color: 'text-slate-400', sub: '12mo' },
                 ].map(m => (
-                  <div key={m.label}>
+                  <div key={m.label} className="border-r border-slate-800/50 pr-5 last:border-0 last:pr-0">
                     <p className="text-[8px] text-slate-600 uppercase font-black tracking-wider">{m.label}</p>
                     <p className={`font-black text-sm mt-0.5 ${m.color}`}>{m.value}</p>
+                    <p className="text-[8px] text-slate-700 font-mono">{m.sub}</p>
                   </div>
                 ))}
               </div>
@@ -306,18 +308,19 @@ const App: React.FC = () => {
   const renderMatrix = () => (
     <div className="space-y-5 animate-in slide-in-from-right duration-500">
       {/* Live Score Banner */}
-      <div className="bg-[#081a1a] border border-teal-900/25 rounded-2xl p-5 flex items-center justify-between gap-6">
-        <div>
+      <div className="bg-[#081a1a] border border-teal-900/25 rounded-2xl p-5 flex items-center gap-6 relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none" style={{ background: `radial-gradient(ellipse at 30% 50%, ${animatedScore >= 800 ? 'rgba(34,197,94,0.04)' : animatedScore >= 650 ? 'rgba(212,175,55,0.04)' : 'rgba(239,68,68,0.04)'} 0%, transparent 70%)` }} />
+        <div className="flex-shrink-0">
+          <ScoreGauge score={animatedScore} size={110} />
+        </div>
+        <div className="flex-1 min-w-0">
           <p className="text-[9px] text-slate-500 uppercase font-black tracking-widest mb-1">Live Feasibility Index</p>
           <div className="flex items-end gap-3">
             <span className="text-5xl font-bold text-white tracking-tighter tabular-nums">{animatedScore}</span>
             <span className="text-slate-600 font-light mb-1">/ 1000</span>
+            <span className={`mb-1 text-xs font-black px-3 py-1 rounded-full border ${scoreRating.bg} ${scoreRating.color}`}>{scoreRating.label}</span>
           </div>
-          <p className="text-[9px] text-slate-600 font-mono mt-1 uppercase">Adjust sliders to model capital impact in real-time</p>
-        </div>
-        <div className="flex flex-col items-end gap-3">
-          <span className={`text-xs font-black px-4 py-1.5 rounded-full border ${scoreRating.bg} ${scoreRating.color}`}>{scoreRating.label}</span>
-          <div className="w-48 h-2 bg-slate-800 rounded-full overflow-hidden">
+          <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden mt-3">
             <div
               className="h-full rounded-full transition-all duration-500"
               style={{
@@ -326,10 +329,16 @@ const App: React.FC = () => {
               }}
             ></div>
           </div>
-          <div className="flex gap-4 text-[9px] font-mono text-slate-600 uppercase">
-            {quadrants.map(q => (
-              <span key={q.name}>{q.name[0]}: <span className="text-slate-400">{q.value}</span></span>
-            ))}
+          <div className="flex items-center justify-between mt-2">
+            <p className="text-[9px] text-slate-600 font-mono uppercase">Adjust sliders · Capital impact modeled live</p>
+            <div className="flex gap-3 text-[9px] font-mono text-slate-600 uppercase">
+              {quadrants.map(q => (
+                <span key={q.name} className="flex items-center gap-1">
+                  <span className="text-slate-700">{q.name[0]}:</span>
+                  <span className="text-slate-400 font-black">{q.value}</span>
+                </span>
+              ))}
+            </div>
           </div>
         </div>
       </div>
