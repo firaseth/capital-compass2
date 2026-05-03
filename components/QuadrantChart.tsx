@@ -24,7 +24,7 @@ const QuadrantChart: React.FC<QuadrantChartProps> = ({ data }) => {
 
   return (
     <div className="w-full h-full min-h-[300px]">
-      <ResponsiveContainer width="100%" height="100%">
+      <ResponsiveContainer width="100%" height="100%" debounce={50}>
         <RadarChart cx="50%" cy="50%" outerRadius="72%" data={data}>
           <defs>
             <radialGradient id="radarFill" cx="50%" cy="50%" r="50%">

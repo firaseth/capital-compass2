@@ -2,6 +2,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import QuadrantChart from './components/QuadrantChart';
+import QuadrantCards from './components/QuadrantCards';
 import GuardianChat from './components/GuardianChat';
 import VideoAnalyzer from './components/VideoAnalyzer';
 import PortfolioPerformance from './components/PortfolioPerformance';
@@ -10,6 +11,7 @@ import QuickActions from './components/QuickActions';
 import NotificationCenter from './components/NotificationCenter';
 import AssetRegistry from './components/AssetRegistry';
 import Logo from './components/Logo';
+import { useAnimatedCounter } from './hooks/useAnimatedCounter';
 import { THEME, INITIAL_QUADRANTS } from './constants';
 import { AppSection, QuadrantScore, Scenario } from './types';
 import { generateFeasibilityReport } from './services/geminiService';
@@ -17,6 +19,7 @@ import { generateFeasibilityReport } from './services/geminiService';
 const App: React.FC = () => {
   const [activeSection, setActiveSection] = useState<AppSection>(AppSection.DASHBOARD);
   const [quadrants, setQuadrants] = useState<QuadrantScore[]>(INITIAL_QUADRANTS);
+  
   const [scenarios, setScenarios] = useState<Scenario[]>([]);
   const [toast, setToast] = useState<{ message: string; visible: boolean }>({ message: '', visible: false });
   const [isGeneratingReport, setIsGeneratingReport] = useState(false);
@@ -52,6 +55,8 @@ const App: React.FC = () => {
     const score = (growth * 0.35) + (stability * 0.3) + (liquidity * 0.2) + ((100 - risk) * 0.15);
     return Math.round(score * 10);
   }, [quadrants]);
+
+  const animatedScore = useAnimatedCounter(totalScore);
 
   const saveScenario = () => {
     const name = `Snapshot ${scenarios.length + 1}`;
@@ -108,6 +113,9 @@ const App: React.FC = () => {
         <MarketOverview />
       </div>
 
+      {/* Quadrant Mini-Cards */}
+      <QuadrantCards quadrants={quadrants} />
+
       {/* Main grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* Left: charts */}
@@ -120,7 +128,7 @@ const App: React.FC = () => {
               <div>
                 <p className="text-[9px] text-[#D4AF37] uppercase font-black tracking-widest mb-1">Total Feasibility Index</p>
                 <div className="flex items-end gap-3">
-                  <h2 className="text-5xl font-bold text-white tracking-tighter leading-none">{totalScore}</h2>
+                  <h2 className="text-5xl font-bold text-white tracking-tighter leading-none tabular-nums">{animatedScore}</h2>
                   <span className="text-base text-slate-600 font-light mb-1">/ 1000</span>
                 </div>
               </div>
@@ -246,30 +254,71 @@ const App: React.FC = () => {
     </div>
   );
 
-  const renderMatrix = () => (
-    <div className="space-y-6 animate-in slide-in-from-right duration-500">
-      <div className="bg-[#081a1a] p-8 rounded-2xl border border-teal-900/25">
-        <h2 className="text-xl font-bold text-white mb-1 tracking-widest uppercase">Sensitivity Analysis Tool</h2>
-        <p className="text-[9px] text-slate-500 uppercase font-black tracking-widest mb-8">Model impact on capital integrity in real-time</p>
+  const scoreRating = animatedScore >= 800 ? { label: 'OPTIMIZED', color: 'text-green-400', bg: 'bg-green-500/10 border-green-500/20' }
+    : animatedScore >= 650 ? { label: 'VIABLE', color: 'text-[#D4AF37]', bg: 'bg-[#D4AF37]/10 border-[#D4AF37]/20' }
+    : animatedScore >= 450 ? { label: 'MARGINAL', color: 'text-amber-500', bg: 'bg-amber-500/10 border-amber-500/20' }
+    : { label: 'HIGH RISK', color: 'text-red-400', bg: 'bg-red-500/10 border-red-500/20' };
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {quadrants.map((q) => (
-            <div key={q.name} className="p-6 bg-black/30 rounded-2xl border border-teal-900/20 hover:border-[#D4AF37]/30 transition-all group">
-              <div className="flex justify-between items-start mb-4">
+  const renderMatrix = () => (
+    <div className="space-y-5 animate-in slide-in-from-right duration-500">
+      {/* Live Score Banner */}
+      <div className="bg-[#081a1a] border border-teal-900/25 rounded-2xl p-5 flex items-center justify-between gap-6">
+        <div>
+          <p className="text-[9px] text-slate-500 uppercase font-black tracking-widest mb-1">Live Feasibility Index</p>
+          <div className="flex items-end gap-3">
+            <span className="text-5xl font-bold text-white tracking-tighter tabular-nums">{animatedScore}</span>
+            <span className="text-slate-600 font-light mb-1">/ 1000</span>
+          </div>
+          <p className="text-[9px] text-slate-600 font-mono mt-1 uppercase">Adjust sliders to model capital impact in real-time</p>
+        </div>
+        <div className="flex flex-col items-end gap-3">
+          <span className={`text-xs font-black px-4 py-1.5 rounded-full border ${scoreRating.bg} ${scoreRating.color}`}>{scoreRating.label}</span>
+          <div className="w-48 h-2 bg-slate-800 rounded-full overflow-hidden">
+            <div
+              className="h-full rounded-full transition-all duration-500"
+              style={{
+                width: `${(animatedScore / 1000) * 100}%`,
+                background: `linear-gradient(90deg, #8B732A, #D4AF37)`
+              }}
+            ></div>
+          </div>
+          <div className="flex gap-4 text-[9px] font-mono text-slate-600 uppercase">
+            {quadrants.map(q => (
+              <span key={q.name}>{q.name[0]}: <span className="text-slate-400">{q.value}</span></span>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Slider Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {quadrants.map((q) => {
+          const weight = q.name === 'Growth' ? 35 : q.name === 'Stability' ? 30 : q.name === 'Liquidity' ? 20 : 15;
+          const valColor = q.name === 'Risk'
+            ? (q.value <= 30 ? 'text-green-400' : q.value <= 60 ? 'text-amber-400' : 'text-red-400')
+            : (q.value >= 75 ? 'text-green-400' : q.value >= 50 ? 'text-[#D4AF37]' : 'text-amber-400');
+          const trackColor = q.name === 'Risk'
+            ? (q.value <= 30 ? 'bg-green-500' : q.value <= 60 ? 'bg-amber-500' : 'bg-red-500')
+            : (q.value >= 75 ? 'bg-green-500' : q.value >= 50 ? 'bg-[#D4AF37]' : 'bg-amber-500');
+          return (
+            <div key={q.name} className="p-6 bg-[#081a1a] rounded-2xl border border-teal-900/25 hover:border-[#D4AF37]/30 transition-all">
+              <div className="flex justify-between items-start mb-3">
                 <div>
-                  <h4 className="text-[#D4AF37] font-bold uppercase tracking-widest text-sm">{q.name}</h4>
-                  <p className="text-[9px] text-slate-500 mt-0.5 uppercase font-black">
-                    Weight: {q.name === 'Growth' ? '35%' : q.name === 'Stability' ? '30%' : q.name === 'Liquidity' ? '20%' : '15%'}
+                  <h4 className="text-white font-bold uppercase tracking-widest text-sm">{q.name}</h4>
+                  <p className="text-[9px] text-slate-500 mt-0.5 font-mono uppercase">
+                    {weight}% weight{q.name === 'Risk' ? ' · Inverse' : ''}
                   </p>
                 </div>
-                <span className="text-4xl font-black text-white tabular-nums">{q.value}<span className="text-xs text-[#D4AF37] ml-1">%</span></span>
+                <span className={`text-4xl font-black tabular-nums ${valColor}`}>{q.value}<span className="text-xs text-slate-600 ml-1">/100</span></span>
               </div>
-              <p className="text-xs text-slate-400 leading-relaxed mb-5 font-medium">{q.description}</p>
-              <div className="w-full bg-slate-900 h-1 rounded-full relative">
-                <div
-                  className="h-full bg-gradient-to-r from-[#8B732A] to-[#D4AF37] rounded-full transition-all duration-300"
-                  style={{ width: `${q.value}%` }}
-                ></div>
+              <p className="text-[11px] text-slate-400 leading-relaxed mb-5">{q.description}</p>
+              <div className="relative group/slider">
+                <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                  <div
+                    className={`h-full ${trackColor} rounded-full transition-all duration-150`}
+                    style={{ width: `${q.value}%` }}
+                  ></div>
+                </div>
                 <input
                   type="range"
                   min="0"
@@ -279,16 +328,17 @@ const App: React.FC = () => {
                     const newVal = parseInt(e.target.value);
                     setQuadrants(prev => prev.map(curr => curr.name === q.name ? { ...curr, value: newVal } : curr));
                   }}
-                  className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10"
+                  className="absolute inset-y-0 left-0 w-full opacity-0 cursor-pointer h-2 z-10"
                 />
               </div>
-              <div className="mt-3 flex justify-between text-[8px] text-slate-600 uppercase font-mono">
-                <span>Threshold: 40%</span>
-                <span>Optimized: 85%+</span>
+              <div className="mt-3 flex justify-between text-[8px] text-slate-700 uppercase font-mono">
+                <span>0 — Critical</span>
+                <span>50 — Baseline</span>
+                <span>100 — Peak</span>
               </div>
             </div>
-          ))}
-        </div>
+          );
+        })}
       </div>
     </div>
   );
@@ -347,16 +397,64 @@ const App: React.FC = () => {
             </div>
           )}
           {activeSection === AppSection.INGEST && (
-            <div className="flex items-center justify-center min-h-[60vh]">
-              <div className="bg-[#081a1a] p-12 rounded-3xl border border-teal-900/25 text-center max-w-2xl">
-                <Logo className="w-20 h-20 mx-auto mb-6" />
-                <h2 className="text-2xl font-bold text-white mb-2 tracking-widest uppercase">Data Acquisition Pipeline</h2>
-                <p className="text-slate-500 text-sm mb-10 font-medium uppercase tracking-widest">SHA-256 Secured Ledger Synchronization</p>
-                <div className="grid grid-cols-3 gap-4">
-                  {['Financials', 'Social', 'Markets'].map(item => (
-                    <div key={item} className="p-5 bg-black/40 border border-teal-900/20 rounded-2xl hover:border-[#D4AF37]/20 transition-colors">
-                      <span className="text-xs font-black text-white uppercase tracking-widest">{item}</span>
-                      <p className="text-[9px] text-teal-600 mt-2 font-mono">SYNC_READY</p>
+            <div className="space-y-5 animate-in fade-in duration-500">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {[
+                  { label: 'Financials', status: 'SYNC_ACTIVE', pct: 94, color: 'text-green-400', bar: 'bg-green-500', items: ['Balance Sheet', 'P&L Statement', 'Cash Flow', 'Revenue Streams'] },
+                  { label: 'Social',     status: 'SYNC_ACTIVE', pct: 87, color: 'text-blue-400',  bar: 'bg-blue-500',  items: ['Engagement Index', 'Follower Growth', 'Brand Sentiment', 'Creator Score'] },
+                  { label: 'Markets',    status: 'SYNC_ACTIVE', pct: 99, color: 'text-[#D4AF37]', bar: 'bg-[#D4AF37]', items: ['S&P 500', 'BTC/USD', 'Gold Spot', 'US 10Y Yield'] },
+                ].map(feed => (
+                  <div key={feed.label} className="bg-[#081a1a] border border-teal-900/25 rounded-2xl p-5 space-y-4">
+                    <div className="flex justify-between items-center">
+                      <h3 className="text-xs font-black text-white uppercase tracking-widest">{feed.label}</h3>
+                      <span className={`text-[9px] font-black font-mono ${feed.color} flex items-center gap-1.5`}>
+                        <span className={`w-1.5 h-1.5 rounded-full ${feed.bar} animate-pulse`}></span>
+                        {feed.status}
+                      </span>
+                    </div>
+                    <div>
+                      <div className="flex justify-between mb-1.5">
+                        <span className="text-[9px] text-slate-500 font-mono uppercase">Integrity Score</span>
+                        <span className={`text-[9px] font-black font-mono ${feed.color}`}>{feed.pct}%</span>
+                      </div>
+                      <div className="w-full h-1 bg-slate-800 rounded-full overflow-hidden">
+                        <div className={`h-full ${feed.bar} rounded-full`} style={{ width: `${feed.pct}%` }}></div>
+                      </div>
+                    </div>
+                    <div className="space-y-2 pt-1">
+                      {feed.items.map(item => (
+                        <div key={item} className="flex items-center justify-between py-1.5 border-b border-slate-800/50 last:border-0">
+                          <span className="text-[10px] text-slate-400 font-medium">{item}</span>
+                          <span className="text-[9px] text-green-500 font-mono font-black">✓ VERIFIED</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="bg-[#081a1a] border border-teal-900/25 rounded-2xl p-5">
+                <div className="flex justify-between items-center mb-4">
+                  <div>
+                    <h3 className="text-xs font-black text-white uppercase tracking-widest">Ledger Sync Log</h3>
+                    <p className="text-[9px] text-slate-500 font-mono mt-0.5">SHA-256 Secured Ledger Synchronization</p>
+                  </div>
+                  <span className="text-[9px] bg-green-500/10 text-green-400 px-3 py-1 rounded-full border border-green-500/20 font-black">ALL SYSTEMS NOMINAL</span>
+                </div>
+                <div className="space-y-2 max-h-48 overflow-y-auto custom-scrollbar pr-1 font-mono text-[10px]">
+                  {[
+                    { time: '08:21:44', msg: 'SHA-256 hash verified for block #00A4F2', type: 'success' },
+                    { time: '08:21:39', msg: 'Market data ingested — 4 indicators synced', type: 'success' },
+                    { time: '08:20:55', msg: 'Social sentiment index recalculated: 87.2', type: 'info' },
+                    { time: '08:19:12', msg: 'Financial ledger block committed to chain', type: 'success' },
+                    { time: '08:17:30', msg: 'Derivative asset AST-004 flagged for review', type: 'warn' },
+                    { time: '08:15:00', msg: 'Full pipeline sync initiated — 3 data feeds', type: 'info' },
+                  ].map((log, i) => (
+                    <div key={i} className="flex items-start gap-3 py-1.5 border-b border-slate-800/40 last:border-0">
+                      <span className="text-slate-600 flex-shrink-0">{log.time}</span>
+                      <span className={`flex-shrink-0 font-black ${log.type === 'success' ? 'text-green-500' : log.type === 'warn' ? 'text-amber-500' : 'text-blue-400'}`}>
+                        {log.type === 'success' ? '✓' : log.type === 'warn' ? '⚠' : 'ℹ'}
+                      </span>
+                      <span className="text-slate-400">{log.msg}</span>
                     </div>
                   ))}
                 </div>
