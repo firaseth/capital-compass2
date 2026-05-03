@@ -18,20 +18,29 @@ export const INITIAL_QUADRANTS = [
 ];
 
 export const SAMPLE_ASSETS = [
-  { id: 'AST-001', name: 'Creator Portfolio Alpha', type: 'Equity', value: 1250000, veracityHash: 'sha256:7f83...a9b2', status: 'verified' },
-  { id: 'AST-002', name: 'Global Rights Catalog', type: 'Intellectual Property', value: 850000, veracityHash: 'sha256:3e12...f9c0', status: 'verified' },
-  { id: 'AST-003', name: 'Liquid Reserves (USD)', type: 'Cash', value: 340000, veracityHash: 'sha256:a221...e3b4', status: 'verified' },
-  { id: 'AST-004', name: 'Emerging Market Option', type: 'Derivative', value: 150000, veracityHash: 'sha256:d889...b112', status: 'flagged' },
+  { id: 'AST-001', name: 'Creator Portfolio Alpha',     type: 'Equity',               value: 1250000, veracityHash: 'sha256:7f83...a9b2', status: 'verified', ytd: '+24.1%', risk: 'Low' },
+  { id: 'AST-002', name: 'Global Rights Catalog',       type: 'Intellectual Property', value:  850000, veracityHash: 'sha256:3e12...f9c0', status: 'verified', ytd: '+11.7%', risk: 'Low' },
+  { id: 'AST-003', name: 'Liquid Reserves (USD)',        type: 'Cash',                 value:  340000, veracityHash: 'sha256:a221...e3b4', status: 'verified', ytd: '+5.1%',  risk: 'None' },
+  { id: 'AST-004', name: 'Emerging Market Option',       type: 'Derivative',           value:  150000, veracityHash: 'sha256:d889...b112', status: 'flagged', ytd: '-8.3%',  risk: 'High' },
+  { id: 'AST-005', name: 'Institutional Bond Series C',  type: 'Fixed Income',         value:  620000, veracityHash: 'sha256:b41c...22e1', status: 'verified', ytd: '+6.8%',  risk: 'Low' },
+  { id: 'AST-006', name: 'Offshore Real Estate Fund',    type: 'Real Estate',          value:  490000, veracityHash: 'sha256:f992...8d77', status: 'verified', ytd: '+18.2%', risk: 'Med' },
+  { id: 'AST-007', name: 'Media IP Pool — Catalog Q3',  type: 'Intellectual Property', value:  275000, veracityHash: 'sha256:c100...9f3a', status: 'pending', ytd: '+3.4%',  risk: 'Med' },
+  { id: 'AST-008', name: 'Digital Infrastructure REIT',  type: 'Real Estate',          value:  380000, veracityHash: 'sha256:e554...a1b8', status: 'verified', ytd: '+31.0%', risk: 'Low' },
 ];
 
 export const PERFORMANCE_DATA = [
-  { month: 'Jan', value: 450000, growth: 12 },
-  { month: 'Feb', value: 475000, growth: 15 },
-  { month: 'Mar', value: 460000, growth: 10 },
-  { month: 'Apr', value: 510000, growth: 22 },
-  { month: 'May', value: 550000, growth: 25 },
-  { month: 'Jun', value: 590000, growth: 28 },
-  { month: 'Jul', value: 620000, growth: 31 },
+  { month: 'Jan', value: 450000, benchmark: 420000 },
+  { month: 'Feb', value: 475000, benchmark: 438000 },
+  { month: 'Mar', value: 460000, benchmark: 445000 },
+  { month: 'Apr', value: 510000, benchmark: 455000 },
+  { month: 'May', value: 550000, benchmark: 462000 },
+  { month: 'Jun', value: 590000, benchmark: 470000 },
+  { month: 'Jul', value: 620000, benchmark: 480000 },
+  { month: 'Aug', value: 605000, benchmark: 490000 },
+  { month: 'Sep', value: 648000, benchmark: 498000 },
+  { month: 'Oct', value: 690000, benchmark: 508000 },
+  { month: 'Nov', value: 720000, benchmark: 515000 },
+  { month: 'Dec', value: 762000, benchmark: 522000 },
 ];
 
 export const MARKET_INDICATORS = [

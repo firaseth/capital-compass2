@@ -35,6 +35,8 @@ export interface Asset {
   value: number;
   veracityHash: string;
   status: 'verified' | 'pending' | 'flagged';
+  ytd?: string;
+  risk?: string;
 }
 
 export enum AppSection {

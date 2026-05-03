@@ -59,6 +59,44 @@
         .logo-gradient {
             background: radial-gradient(circle at center, rgba(30, 64, 175, 0.1) 0%, transparent 70%);
         }
+
+        /* Custom range slider */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
+            cursor: pointer;
+            width: 100%;
+            height: 8px;
+        }
+        input[type="range"]::-webkit-slider-runnable-track {
+            background: transparent;
+            height: 8px;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            height: 18px;
+            width: 18px;
+            border-radius: 50%;
+            background: #D4AF37;
+            margin-top: -5px;
+            box-shadow: 0 0 8px rgba(212, 175, 55, 0.6);
+            border: 2px solid #0a1222;
+            transition: box-shadow 0.2s;
+        }
+        input[type="range"]::-webkit-slider-thumb:hover {
+            box-shadow: 0 0 14px rgba(212, 175, 55, 0.9);
+        }
+        input[type="range"]::-moz-range-thumb {
+            height: 18px;
+            width: 18px;
+            border-radius: 50%;
+            background: #D4AF37;
+            box-shadow: 0 0 8px rgba(212, 175, 55, 0.6);
+            border: 2px solid #0a1222;
+            cursor: pointer;
+        }
     </style>
 <script type="importmap">
 {

@@ -11,6 +11,8 @@ import QuickActions from './components/QuickActions';
 import NotificationCenter from './components/NotificationCenter';
 import AssetRegistry from './components/AssetRegistry';
 import Logo from './components/Logo';
+import ScoreGauge from './components/ScoreGauge';
+import ReportRenderer from './components/ReportRenderer';
 import { useAnimatedCounter } from './hooks/useAnimatedCounter';
 import { THEME, INITIAL_QUADRANTS } from './constants';
 import { AppSection, QuadrantScore, Scenario } from './types';
@@ -27,6 +29,14 @@ const App: React.FC = () => {
   const [isMidnight, setIsMidnight] = useState(() => {
     return localStorage.getItem('theme-midnight') === 'true';
   });
+  const [clock, setClock] = useState(() => new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }));
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setClock(new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     if (isMidnight) {
@@ -131,34 +141,39 @@ const App: React.FC = () => {
                   <h2 className="text-5xl font-bold text-white tracking-tighter leading-none tabular-nums">{animatedScore}</h2>
                   <span className="text-base text-slate-600 font-light mb-1">/ 1000</span>
                 </div>
+                <div className="flex items-center gap-2 mt-2">
+                  <span className={`text-[9px] font-black px-2.5 py-0.5 rounded-full border ${scoreRating.bg} ${scoreRating.color}`}>{scoreRating.label}</span>
+                </div>
               </div>
-              <div className="text-right">
-                <p className="text-[9px] font-mono text-slate-500 block uppercase tracking-wider mb-1">Confidence</p>
-                <span className="text-green-400 text-xl font-bold">94.2%</span>
+              <div className="flex flex-col items-center -mt-2 -mr-2">
+                <ScoreGauge score={animatedScore} />
+                <div className="flex justify-between w-full px-2 -mt-2 text-[8px] font-mono text-slate-700 uppercase">
+                  <span>0</span>
+                  <span className="text-slate-500">Confidence <span className="text-green-400 font-black">94.2%</span></span>
+                  <span>1000</span>
+                </div>
               </div>
             </div>
 
             <PortfolioPerformance />
 
-            <div className="mt-5 pt-4 border-t border-slate-800/70 flex justify-between items-center">
-              <div className="flex gap-6">
-                <div>
-                  <p className="text-[9px] text-slate-500 uppercase font-black tracking-wider">Target ROI</p>
-                  <p className="text-white font-bold mt-0.5">18.4%</p>
-                </div>
-                <div>
-                  <p className="text-[9px] text-slate-500 uppercase font-black tracking-wider">Payback</p>
-                  <p className="text-white font-bold mt-0.5">14.2 Mo</p>
-                </div>
-                <div>
-                  <p className="text-[9px] text-slate-500 uppercase font-black tracking-wider">IRR</p>
-                  <p className="text-white font-bold mt-0.5">22.1%</p>
-                </div>
+            <div className="mt-4 pt-4 border-t border-slate-800/70 flex items-center justify-between gap-4">
+              <div className="flex gap-4">
+                {[
+                  { label: 'YTD Return', value: '+69.3%', color: 'text-green-400' },
+                  { label: 'Alpha', value: '+41.4%', color: 'text-green-400' },
+                  { label: 'Sharpe', value: '2.14', color: 'text-[#D4AF37]' },
+                ].map(m => (
+                  <div key={m.label}>
+                    <p className="text-[8px] text-slate-600 uppercase font-black tracking-wider">{m.label}</p>
+                    <p className={`font-black text-sm mt-0.5 ${m.color}`}>{m.value}</p>
+                  </div>
+                ))}
               </div>
               <button
                 onClick={handleGenerateReport}
                 disabled={isGeneratingReport}
-                className="bg-[#D4AF37] text-slate-900 px-5 py-2 rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-[#c9a730] transition-all disabled:opacity-50 flex items-center gap-2"
+                className="bg-[#D4AF37] text-slate-900 px-5 py-2.5 rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-[#c9a730] transition-all disabled:opacity-50 flex items-center gap-2 flex-shrink-0"
               >
                 {isGeneratingReport ? (
                   <>
@@ -166,7 +181,12 @@ const App: React.FC = () => {
                     Compiling...
                   </>
                 ) : (
-                  'Generate AI Summary'
+                  <>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                    Generate AI Summary
+                  </>
                 )}
               </button>
             </div>
@@ -185,8 +205,8 @@ const App: React.FC = () => {
                   </svg>
                 </button>
               </div>
-              <div className="text-sm text-slate-300 leading-relaxed font-medium whitespace-pre-wrap max-h-[280px] overflow-y-auto custom-scrollbar pr-2">
-                {report}
+              <div className="max-h-[300px] overflow-y-auto custom-scrollbar pr-2">
+                <ReportRenderer text={report} />
               </div>
             </div>
           )}
@@ -242,6 +262,27 @@ const App: React.FC = () => {
           <div className="bg-[#081a1a] p-5 rounded-2xl border border-teal-900/25">
             <h3 className="text-[9px] font-black text-[#D4AF37] uppercase tracking-widest mb-3">Underwriting Controls</h3>
             <QuickActions onReset={resetQuadrants} onActionComplete={showToast} />
+          </div>
+
+          {/* Capital Metrics Panel */}
+          <div className="bg-[#081a1a] p-5 rounded-2xl border border-teal-900/25">
+            <h3 className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-4">Capital Metrics</h3>
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { label: 'Target ROI', value: '18.4%', change: '+2.1%', up: true },
+                { label: 'Payback', value: '14.2 Mo', change: '-1.3mo', up: true },
+                { label: 'IRR', value: '22.1%', change: '+0.8%', up: true },
+                { label: 'DSCR', value: '1.42×', change: '+0.05×', up: true },
+                { label: 'LTV Ratio', value: '63.2%', change: '-1.1%', up: true },
+                { label: 'Cap Rate', value: '7.8%', change: '+0.3%', up: true },
+              ].map(m => (
+                <div key={m.label} className="bg-black/30 border border-slate-800/50 rounded-xl p-3">
+                  <p className="text-[8px] text-slate-600 font-black uppercase tracking-widest mb-1">{m.label}</p>
+                  <p className="text-white font-bold text-sm tabular-nums">{m.value}</p>
+                  <p className={`text-[9px] font-black mt-0.5 ${m.up ? 'text-green-500' : 'text-red-400'}`}>{m.change}</p>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Veracity stream */}
@@ -312,8 +353,8 @@ const App: React.FC = () => {
                 <span className={`text-4xl font-black tabular-nums ${valColor}`}>{q.value}<span className="text-xs text-slate-600 ml-1">/100</span></span>
               </div>
               <p className="text-[11px] text-slate-400 leading-relaxed mb-5">{q.description}</p>
-              <div className="relative group/slider">
-                <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+              <div className="relative group/slider" style={{ paddingTop: '8px', paddingBottom: '8px' }}>
+                <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden absolute left-0 right-0" style={{ top: '50%', transform: 'translateY(-50%)' }}>
                   <div
                     className={`h-full ${trackColor} rounded-full transition-all duration-150`}
                     style={{ width: `${q.value}%` }}
@@ -328,7 +369,8 @@ const App: React.FC = () => {
                     const newVal = parseInt(e.target.value);
                     setQuadrants(prev => prev.map(curr => curr.name === q.name ? { ...curr, value: newVal } : curr));
                   }}
-                  className="absolute inset-y-0 left-0 w-full opacity-0 cursor-pointer h-2 z-10"
+                  className="relative w-full cursor-pointer z-10"
+                  style={{ background: 'transparent', WebkitAppearance: 'none', appearance: 'none', height: '18px' }}
                 />
               </div>
               <div className="mt-3 flex justify-between text-[8px] text-slate-700 uppercase font-mono">
@@ -372,7 +414,9 @@ const App: React.FC = () => {
                 </svg>
               )}
             </button>
-            <div className="bg-slate-900/50 border border-slate-800 rounded-full px-3 py-1.5 flex items-center gap-2">
+            <div className="bg-slate-900/50 border border-slate-800 rounded-full px-3 py-1.5 flex items-center gap-3">
+              <span className="text-[9px] font-mono font-bold text-slate-600 tabular-nums">{clock}</span>
+              <div className="w-px h-3 bg-slate-700"></div>
               <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
               <span className="text-[9px] font-mono font-bold text-slate-400">API_HEALTH: 99.9%</span>
             </div>
@@ -465,14 +509,21 @@ const App: React.FC = () => {
         </div>
 
         {/* Footer */}
-        <footer className="px-8 py-5 border-t border-slate-800/50 flex justify-between items-center text-[9px] uppercase tracking-widest font-black text-slate-600">
-          <div className="flex gap-5">
-            <span>© 2024 Capital Compass Ltd</span>
-            <span className="text-[#D4AF37]/40">SHA-256 Verified</span>
+        <footer className="px-8 py-4 border-t border-slate-800/50 flex justify-between items-center text-[9px] uppercase tracking-widest font-black text-slate-700">
+          <div className="flex items-center gap-5">
+            <span>© 2025 Capital Compass Ltd</span>
+            <span className="text-[#D4AF37]/30">·</span>
+            <span className="text-[#D4AF37]/40 flex items-center gap-1.5">
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+              SHA-256 Verified
+            </span>
+            <span>Build v2.4.1</span>
           </div>
-          <div className="flex gap-5">
-            <a href="#" className="hover:text-white transition-colors">Risk Protocol</a>
-            <a href="#" className="hover:text-white transition-colors">Compliance Hub</a>
+          <div className="flex items-center gap-5">
+            <span className="font-mono text-slate-700 tabular-nums normal-case">Session: {clock}</span>
+            <span className="text-slate-700">·</span>
+            <a href="#" className="hover:text-slate-400 transition-colors">Risk Protocol</a>
+            <a href="#" className="hover:text-slate-400 transition-colors">Compliance Hub</a>
           </div>
         </footer>
 
