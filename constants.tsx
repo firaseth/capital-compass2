@@ -97,9 +97,13 @@ export const INDICATOR_DETAILS: Record<string, {
 };
 
 export const NOTIFICATIONS = [
-  { id: 1, title: 'Veracity Check Complete', time: '2m ago', type: 'success', message: 'SHA-256 Ledger synchronized.' },
-  { id: 2, title: 'Risk Alert: Stability', time: '1h ago', type: 'warning', message: 'Stability quadrant dipped below 75% threshold.' },
-  { id: 3, title: 'Guardian Nudge', time: '3h ago', type: 'info', message: 'New stabilization plan generated for Q3.' },
+  { id: 1, title: 'Veracity Check Complete',    time: '2m ago',  type: 'success', message: 'SHA-256 institutional ledger synchronized. Block #00A4F2 committed.' },
+  { id: 2, title: 'Risk Alert: Stability',       time: '14m ago', type: 'warning', message: 'Stability quadrant dipped below 75% threshold — recommend review.' },
+  { id: 3, title: 'Guardian AI Nudge',           time: '1h ago',  type: 'info',    message: 'New capital stabilization plan generated for Q3. Confidence: 94.2%.' },
+  { id: 4, title: 'Asset Flagged: AST-004',      time: '1h ago',  type: 'warning', message: 'Emerging Market Option flagged for compliance review. Risk: High.' },
+  { id: 5, title: 'Market Data Ingested',        time: '2h ago',  type: 'success', message: '4 market indicators synced — S&P 500, BTC/USD, US 10Y, Gold Spot.' },
+  { id: 6, title: 'New Asset Verified',          time: '3h ago',  type: 'success', message: 'Digital Infrastructure REIT (AST-008) SHA-256 verified. Status: Active.' },
+  { id: 7, title: 'Pipeline Integrity Report',   time: '4h ago',  type: 'info',    message: 'All 3 data feeds nominal. Blended integrity score: 93.3%.' },
 ];
 
 export const ICONS = {

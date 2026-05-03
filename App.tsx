@@ -266,17 +266,20 @@ const App: React.FC = () => {
 
           {/* Capital Metrics Panel */}
           <div className="bg-[#081a1a] p-5 rounded-2xl border border-teal-900/25">
-            <h3 className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-4">Capital Metrics</h3>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Capital Metrics</h3>
+              <span className="text-[8px] font-mono text-[#D4AF37]/50">Live · Auto-calc</span>
+            </div>
             <div className="grid grid-cols-2 gap-3">
               {[
-                { label: 'Target ROI', value: '18.4%', change: '+2.1%', up: true },
-                { label: 'Payback', value: '14.2 Mo', change: '-1.3mo', up: true },
-                { label: 'IRR', value: '22.1%', change: '+0.8%', up: true },
-                { label: 'DSCR', value: '1.42×', change: '+0.05×', up: true },
-                { label: 'LTV Ratio', value: '63.2%', change: '-1.1%', up: true },
-                { label: 'Cap Rate', value: '7.8%', change: '+0.3%', up: true },
+                { label: 'Target ROI',  value: `${(14 + (quadrants.find(q=>q.name==='Growth')?.value||0)*0.05).toFixed(1)}%`,  change: '+2.1%',  up: true },
+                { label: 'Payback',     value: `${Math.max(8, 20 - Math.floor((quadrants.find(q=>q.name==='Liquidity')?.value||0)*0.06))} Mo`, change: '-1.3mo', up: true },
+                { label: 'IRR',         value: `${(18 + (quadrants.find(q=>q.name==='Growth')?.value||0)*0.04).toFixed(1)}%`,  change: '+0.8%',  up: true },
+                { label: 'DSCR',        value: `${(1.1 + (quadrants.find(q=>q.name==='Stability')?.value||0)*0.004).toFixed(2)}×`, change: '+0.05×', up: true },
+                { label: 'LTV Ratio',   value: `${Math.max(45, 80 - Math.floor((quadrants.find(q=>q.name==='Risk')?.value||0)*0.2)).toFixed(1)}%`, change: '-1.1%', up: true },
+                { label: 'Cap Rate',    value: `${(5 + (quadrants.find(q=>q.name==='Stability')?.value||0)*0.03).toFixed(1)}%`, change: '+0.3%',  up: true },
               ].map(m => (
-                <div key={m.label} className="bg-black/30 border border-slate-800/50 rounded-xl p-3">
+                <div key={m.label} className="bg-black/30 border border-slate-800/50 rounded-xl p-3 hover:border-[#D4AF37]/20 transition-colors">
                   <p className="text-[8px] text-slate-600 font-black uppercase tracking-widest mb-1">{m.label}</p>
                   <p className="text-white font-bold text-sm tabular-nums">{m.value}</p>
                   <p className={`text-[9px] font-black mt-0.5 ${m.up ? 'text-green-500' : 'text-red-400'}`}>{m.change}</p>
@@ -490,8 +493,14 @@ const App: React.FC = () => {
                     { time: '08:21:39', msg: 'Market data ingested — 4 indicators synced', type: 'success' },
                     { time: '08:20:55', msg: 'Social sentiment index recalculated: 87.2', type: 'info' },
                     { time: '08:19:12', msg: 'Financial ledger block committed to chain', type: 'success' },
-                    { time: '08:17:30', msg: 'Derivative asset AST-004 flagged for review', type: 'warn' },
-                    { time: '08:15:00', msg: 'Full pipeline sync initiated — 3 data feeds', type: 'info' },
+                    { time: '08:18:44', msg: 'Digital Infrastructure REIT (AST-008) verified', type: 'success' },
+                    { time: '08:17:30', msg: 'Derivative asset AST-004 flagged for compliance', type: 'warn' },
+                    { time: '08:16:05', msg: 'Creator Portfolio Alpha — Q3 projection updated', type: 'info' },
+                    { time: '08:14:50', msg: 'Bond Series C interest payment verified: $21,080', type: 'success' },
+                    { time: '08:13:22', msg: 'Media IP Pool — Catalog Q3 pending veracity check', type: 'warn' },
+                    { time: '08:12:00', msg: 'Guardian AI model updated — v2.4.1 now active', type: 'info' },
+                    { time: '08:10:17', msg: 'Portfolio rebalance signal: +2.1% ROI uplift', type: 'success' },
+                    { time: '08:08:33', msg: 'Full pipeline sync initiated — 3 data feeds online', type: 'info' },
                   ].map((log, i) => (
                     <div key={i} className="flex items-start gap-3 py-1.5 border-b border-slate-800/40 last:border-0">
                       <span className="text-slate-600 flex-shrink-0">{log.time}</span>
